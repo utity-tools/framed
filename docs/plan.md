@@ -1,6 +1,6 @@
 # Framed: development plan
 
-- **Status:** draft for review
+- **Status:** accepted
 - **Date:** 2026-09-29
 
 ## 1. Vision
