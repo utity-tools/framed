@@ -1,0 +1,25 @@
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 5
+    commit-message:
+      prefix: chore
+      include: scope
+    groups:
+      minor-and-patch:
+        update-types: [minor, patch]
+    ignore:
+      # Must match the Node runtime (.nvmrc). Bump manually when Node is upgraded.
+      - dependency-name: "@types/node"
+        update-types: ["version-update:semver-major"]
+
+  # Actions are pinned by commit SHA; Dependabot bumps the SHA and the version comment together.
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: monthly
+    commit-message:
+      prefix: ci
