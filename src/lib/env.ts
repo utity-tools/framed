@@ -2,14 +2,23 @@ import { z } from "zod";
 
 const ORIGIN_ERROR =
   "NEXT_PUBLIC_APP_URL must be an http(s) origin without a path (e.g. http://localhost:3000).";
+const HTTPS_ERROR = "NEXT_PUBLIC_APP_URL must use https outside localhost.";
+
+const LOCAL_HOSTS = new Set(["localhost", "127.0.0.1", "[::1]"]);
 
 export const publicEnvSchema = z.object({
   // Tag URLs and QR codes are built from this origin, and they are printed on physical cards:
-  // a stray path here would end up on every card.
+  // anything beyond a bare https origin would end up on every card.
   NEXT_PUBLIC_APP_URL: z
     .url({ protocol: /^https?$/, error: ORIGIN_ERROR })
     .transform((value) => new URL(value))
-    .refine((url) => url.pathname === "/" && !url.search && !url.hash, { error: ORIGIN_ERROR })
+    .refine(
+      (url) => url.pathname === "/" && !url.search && !url.hash && !url.username && !url.password,
+      { error: ORIGIN_ERROR },
+    )
+    .refine((url) => url.protocol === "https:" || LOCAL_HOSTS.has(url.hostname), {
+      error: HTTPS_ERROR,
+    })
     .transform((url) => url.origin),
 });
 
