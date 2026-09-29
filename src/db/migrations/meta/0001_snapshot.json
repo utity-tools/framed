@@ -1,0 +1,96 @@
+{
+  "id": "2b07b394-c65e-4644-9ab2-7eaf0e83b607",
+  "prevId": "1a4372d8-b5a6-4622-9e6f-404ae8540af0",
+  "version": "7",
+  "dialect": "postgresql",
+  "tables": {
+    "public.organization": {
+      "name": "organization",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "slug": {
+          "name": "slug",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "logo": {
+          "name": "logo",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "metadata": {
+          "name": "metadata",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "organization_slug_unique": {
+          "name": "organization_slug_unique",
+          "nullsNotDistinct": false,
+          "columns": ["slug"]
+        }
+      },
+      "policies": {
+        "organization_app_select": {
+          "name": "organization_app_select",
+          "as": "PERMISSIVE",
+          "for": "SELECT",
+          "to": ["framed_app"],
+          "using": "\"organization\".\"id\" = NULLIF(current_setting('app.organization_id', true), '')"
+        },
+        "organization_auth_all": {
+          "name": "organization_auth_all",
+          "as": "PERMISSIVE",
+          "for": "ALL",
+          "to": ["framed_auth"],
+          "using": "true",
+          "withCheck": "true"
+        }
+      },
+      "checkConstraints": {
+        "organization_id_not_empty": {
+          "name": "organization_id_not_empty",
+          "value": "\"organization\".\"id\" <> ''"
+        }
+      },
+      "isRLSEnabled": false
+    }
+  },
+  "enums": {},
+  "schemas": {},
+  "sequences": {},
+  "roles": {},
+  "policies": {},
+  "views": {},
+  "_meta": {
+    "columns": {},
+    "schemas": {},
+    "tables": {}
+  }
+}

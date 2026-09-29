@@ -8,6 +8,20 @@
       "when": 1790695247872,
       "tag": "0000_db-roles",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1790695696413,
+      "tag": "0001_gigantic_wolf_cub",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1790695696649,
+      "tag": "0002_organization-force-rls-grants",
+      "breakpoints": true
     }
   ]
 }
