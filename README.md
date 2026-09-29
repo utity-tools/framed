@@ -53,7 +53,7 @@ the content, encodes the cards and hands them over ready to hang.
 
 ## Getting started
 
-Requirements: Node 24, pnpm and `jq` (used by the Claude Code hooks).
+Requirements: Node 24, pnpm, Docker (local Postgres) and `jq` (used by the Claude Code hooks).
 
 ```bash
 pnpm install              # also installs the git hooks
@@ -61,12 +61,49 @@ cp .env.example .env.local
 pnpm dev                  # http://localhost:3000
 ```
 
-| Task                         | Command                                           |
-| ---------------------------- | ------------------------------------------------- |
-| Lint / format / format check | `pnpm lint` / `pnpm format` / `pnpm format:check` |
-| Type check                   | `pnpm typecheck`                                  |
-| Unit tests (coverage)        | `pnpm test` (`pnpm test:coverage`)                |
-| E2E and accessibility tests  | `pnpm test:e2e`                                   |
+| Task                          | Command                                           |
+| ----------------------------- | ------------------------------------------------- |
+| Lint / format / format check  | `pnpm lint` / `pnpm format` / `pnpm format:check` |
+| Type check                    | `pnpm typecheck`                                  |
+| Unit tests (coverage)         | `pnpm test` (`pnpm test:coverage`)                |
+| E2E and accessibility tests   | `pnpm test:e2e`                                   |
+| Start local Postgres (Docker) | `pnpm db:up`                                      |
+| Generate / apply migrations   | `pnpm db:generate` / `pnpm db:migrate`            |
+| Database tests (need Docker)  | `pnpm test:db`                                    |
+
+## Database
+
+Local and CI use Postgres 17 in Docker on port 5433 (`pnpm db:up`). The init script in
+`docker/postgres/` creates the login users `framed_app_login` and `framed_auth_login`; migrations
+run as the owner (`MIGRATION_DATABASE_URL`) and the app connects as `framed_app_login`
+(`DATABASE_URL`), so Row Level Security applies ([ADR 0004](docs/adr/0004-better-auth-and-tenant-context.md)).
+Reset, or check that migrations apply from scratch, with `docker compose down -v && pnpm db:up
+&& pnpm db:migrate`. Values in `.env.local` are read by the DB tooling like Next.js does.
+
+`docker/postgres/01-login-users.sql` repeats the role attributes of migration `0000_db-roles`
+(`NOLOGIN NOBYPASSRLS`): change both together.
+
+**Neon, one-off per database.** The migrations create the `NOLOGIN` group roles `framed_auth` and
+`framed_app`; login users are per environment.
+
+1. Migrate first, as the owner (direct endpoint):
+   `MIGRATION_DATABASE_URL='postgres://...?sslmode=require' pnpm db:migrate`.
+2. Create the login users, as the owner, with real passwords:
+
+   ```sql
+   CREATE ROLE framed_app_login LOGIN PASSWORD '...' IN ROLE framed_app;
+   CREATE ROLE framed_auth_login LOGIN PASSWORD '...' IN ROLE framed_auth;
+   ```
+
+3. Set `DATABASE_URL` (`framed_app_login`) and `AUTH_DATABASE_URL` (`framed_auth_login`) with
+   `sslmode=require`. Only `DATABASE_URL` uses the pooled host. Keep `MIGRATION_DATABASE_URL` (direct
+   host, `sslmode=require`) out of the running app.
+4. Verify that neither login user can bypass RLS; both rows must show `f | f`:
+
+   ```sql
+   SELECT rolname, rolsuper, rolbypassrls FROM pg_roles
+    WHERE rolname IN ('framed_app_login', 'framed_auth_login');
+   ```
 
 ## How this project is built
 
