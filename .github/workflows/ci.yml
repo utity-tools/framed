@@ -34,6 +34,37 @@ jobs:
       - name: Unit tests with coverage thresholds
         run: pnpm test:coverage
 
+  db:
+    name: Migrations and database tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413 # v6.1.0
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Migrations match the schema
+        # A schema change without its generated migration would leave new files behind.
+        run: |
+          pnpm db:generate
+          test -z "$(git status --porcelain src/db/migrations)" || {
+            git status --porcelain src/db/migrations
+            echo "::error::Run pnpm db:generate and commit the migration."
+            exit 1
+          }
+      # Same Postgres and init script as local development (docker-compose.yml).
+      - run: pnpm db:up
+      - name: Database tests (migrate from scratch, then RLS and tenant context)
+        run: pnpm test:db
+      - name: Postgres logs
+        if: failure()
+        run: docker compose logs db
+
   commits:
     name: Conventional commits
     # PRs are rebase-merged: every commit of the PR lands on main, so every one is checked.
