@@ -20,11 +20,11 @@ Portfolio goal: a public repository that shows production-grade engineering end 
 
 ### Users and zones
 
-| Zone               | Who                        | What they do                                                                                 |
-| ------------------ | -------------------------- | -------------------------------------------------------------------------------------------- |
+| Zone                 | Who                        | What they do                                                                                                          |
+| -------------------- | -------------------------- | --------------------------------------------------------------------------------------------------------------------- |
 | **Operator console** | Framed operators           | Onboard galleries, import artworks (CSV), translate (AI proposes, human reviews), encode cards, print labels, publish |
-| **Gallery portal**   | Gallery staff and admins   | See their artworks, mark them available/sold, edit prices, read analytics and leads          |
-| **Public pages**     | Visitors (anonymous first) | Tap or scan, read in their language, accessibility options, share, save, "I'm interested"    |
+| **Gallery portal**   | Gallery staff and admins   | See their artworks, mark them available/sold, edit prices, read analytics and leads                                   |
+| **Public pages**     | Visitors (anonymous first) | Tap or scan, read in their language, accessibility options, share, save, "I'm interested"                             |
 
 ### In scope (MVP, v0.1–v0.4)
 
@@ -63,19 +63,19 @@ One-off **setup fee per artwork** (card, translation, label) plus a **monthly fe
 
 ## 4. Stack
 
-| Area          | Choice                                              | Why                                                                     |
-| ------------- | --------------------------------------------------- | ----------------------------------------------------------------------- |
+| Area          | Choice                                                                                   | Why                                                                      |
+| ------------- | ---------------------------------------------------------------------------------------- | ------------------------------------------------------------------------ |
 | App           | Next.js 16 (App Router, Server Actions, Cache Components) · React 19 · TypeScript strict | One app, end-to-end types                                                |
-| UI            | Tailwind CSS v4 · shadcn/ui                         | Accessible primitives, fast iteration                                   |
-| Database      | **Neon Postgres**                                   | A database branch per PR: every preview gets isolated data              |
-| Schema/ORM    | **Drizzle**                                         | Schema in TypeScript, versioned migrations, RLS declared with `pgPolicy` |
-| Auth          | **Better Auth**                                     | Organizations plugin (multi-tenant + roles), passkeys, magic links      |
-| Images        | **Vercel Blob** + `next/image`                      | Optimised artwork photos                                                |
-| i18n          | **next-intl**                                       | UI strings; translated content lives in the database                    |
-| AI            | AI SDK v6 via AI Gateway · Zod-validated output     | Translation proposals reviewed by a human                               |
-| Rate limiting | **Upstash Redis**                                   | Protects public endpoints (scans, leads)                                |
-| Quality       | Vitest · Playwright · axe · Lighthouse CI           | Unit, E2E, accessibility and performance gates                          |
-| Observability | Sentry · Vercel Speed Insights                      | Errors and real-user performance                                        |
+| UI            | Tailwind CSS v4 · shadcn/ui                                                              | Accessible primitives, fast iteration                                    |
+| Database      | **Neon Postgres**                                                                        | A database branch per PR: every preview gets isolated data               |
+| Schema/ORM    | **Drizzle**                                                                              | Schema in TypeScript, versioned migrations, RLS declared with `pgPolicy` |
+| Auth          | **Better Auth**                                                                          | Organizations plugin (multi-tenant + roles), passkeys, magic links       |
+| Images        | **Vercel Blob** + `next/image`                                                           | Optimised artwork photos                                                 |
+| i18n          | **next-intl**                                                                            | UI strings; translated content lives in the database                     |
+| AI            | AI SDK v6 via AI Gateway · Zod-validated output                                          | Translation proposals reviewed by a human                                |
+| Rate limiting | **Upstash Redis**                                                                        | Protects public endpoints (scans, leads)                                 |
+| Quality       | Vitest · Playwright · axe · Lighthouse CI                                                | Unit, E2E, accessibility and performance gates                           |
+| Observability | Sentry · Vercel Speed Insights                                                           | Errors and real-user performance                                         |
 
 Each choice gets an ADR. Differences from the previous project (Supabase) are deliberate.
 
@@ -95,29 +95,29 @@ src/db/                            Drizzle schema, migrations, RLS policies, see
 
 ### Data model (first sketch)
 
-| Table                   | Notes                                                                         |
-| ----------------------- | ----------------------------------------------------------------------------- |
-| `organizations`, `members` | Galleries and their staff (Better Auth organizations), roles `admin`/`staff` |
-| `artists`               | Per gallery                                                                   |
-| `artworks`              | Title, year, medium, dimensions, price, availability, status (draft/published) |
-| `artwork_translations`  | One row per artwork and locale; status proposed/approved                      |
-| `artwork_images`        | Blob URLs, alt text per locale                                                |
-| `tags`                  | Random public ID (not sequential), status unassigned/assigned/retired, artwork |
-| `tag_batches`           | Encoding batches per gallery                                                  |
-| `scans`                 | Tag, locale, time. **No personal data**                                       |
-| `saved_artworks`        | For visitors who opt in to an account                                         |
-| `leads`                 | Artwork, contact, message, status                                             |
+| Table                      | Notes                                                                          |
+| -------------------------- | ------------------------------------------------------------------------------ |
+| `organizations`, `members` | Galleries and their staff (Better Auth organizations), roles `admin`/`staff`   |
+| `artists`                  | Per gallery                                                                    |
+| `artworks`                 | Title, year, medium, dimensions, price, availability, status (draft/published) |
+| `artwork_translations`     | One row per artwork and locale; status proposed/approved                       |
+| `artwork_images`           | Blob URLs, alt text per locale                                                 |
+| `tags`                     | Random public ID (not sequential), status unassigned/assigned/retired, artwork |
+| `tag_batches`              | Encoding batches per gallery                                                   |
+| `scans`                    | Tag, locale, time. **No personal data**                                        |
+| `saved_artworks`           | For visitors who opt in to an account                                          |
+| `leads`                    | Artwork, contact, message, status                                              |
 
 Tenant isolation is enforced in Postgres with RLS, tested with pgTAP-style tests in CI.
 
 ## 6. Environments
 
-| Environment | App                | Database                           | Deployed by                                   |
-| ----------- | ------------------ | ---------------------------------- | --------------------------------------------- |
-| Local       | `pnpm dev`         | Postgres in Docker                 | developer                                     |
-| CI          | GitHub Actions     | Ephemeral Postgres                 | every PR                                      |
-| Preview     | Vercel, one per PR | **Neon branch per PR**             | Vercel + Neon integration                     |
-| Production  | Vercel             | Neon `main`                        | GitHub Actions, after CI and migrations, with approval |
+| Environment | App                | Database               | Deployed by                                            |
+| ----------- | ------------------ | ---------------------- | ------------------------------------------------------ |
+| Local       | `pnpm dev`         | Postgres in Docker     | developer                                              |
+| CI          | GitHub Actions     | Ephemeral Postgres     | every PR                                               |
+| Preview     | Vercel, one per PR | **Neon branch per PR** | Vercel + Neon integration                              |
+| Production  | Vercel             | Neon `main`            | GitHub Actions, after CI and migrations, with approval |
 
 ## 7. Workflow
 
@@ -134,30 +134,30 @@ Tenant isolation is enforced in Postgres with RLS, tested with pgTAP-style tests
 
 ### Enforcement layers
 
-| Layer              | Enforces                                                                                      |
-| ------------------ | --------------------------------------------------------------------------------------------- |
-| Agent instructions | `AGENTS.md`, `CLAUDE.md`, `.claude/agents/`                                                   |
-| Claude Code hooks  | No commit/push on `main`, no `--no-verify`, no force push; format on edit; session start/end checks |
-| Claude permissions | No reading `.env*`, no production deploys or remote migrations                                |
-| Git hooks          | Lint, format, related tests, commitlint, typecheck + unit tests on push                       |
+| Layer              | Enforces                                                                                                            |
+| ------------------ | ------------------------------------------------------------------------------------------------------------------- |
+| Agent instructions | `AGENTS.md`, `CLAUDE.md`, `.claude/agents/`                                                                         |
+| Claude Code hooks  | No commit/push on `main`, no `--no-verify`, no force push; format on edit; session start/end checks                 |
+| Claude permissions | No reading `.env*`, no production deploys or remote migrations                                                      |
+| Git hooks          | Lint, format, related tests, commitlint, typecheck + unit tests on push                                             |
 | CI                 | Format, lint, typecheck, unit, DB/RLS tests, build, E2E, axe, Lighthouse, coverage threshold, commitlint per commit |
-| Security CI        | CodeQL, gitleaks, OSV scanner, actions pinned by SHA, Dependabot                              |
-| Branch rules       | PR required, checks green, up to date, conversations resolved, rebase only, no force push     |
+| Security CI        | CodeQL, gitleaks, OSV scanner, actions pinned by SHA, Dependabot                                                    |
+| Branch rules       | PR required, checks green, up to date, conversations resolved, rebase only, no force push                           |
 
 ## 8. Agent team
 
 The main session is the **director**: it plans, writes briefs, delegates, reviews and integrates.
 Small tasks it does itself; it delegates only when specialisation pays for the cold start.
 
-| Agent               | Model  | Tools      | Owns                                                        |
-| ------------------- | ------ | ---------- | ----------------------------------------------------------- |
-| `db-engineer`       | Sonnet | read/write | Drizzle schema, migrations, RLS, indexes, seed, DB tests    |
+| Agent               | Model  | Tools      | Owns                                                                          |
+| ------------------- | ------ | ---------- | ----------------------------------------------------------------------------- |
+| `db-engineer`       | Sonnet | read/write | Drizzle schema, migrations, RLS, indexes, seed, DB tests                      |
 | `backend-engineer`  | Sonnet | read/write | Server Actions, route handlers, auth, validation, AI translation, rate limits |
-| `frontend-engineer` | Sonnet | read/write | Pages, components, accessibility, i18n UI, performance      |
-| `qa-engineer`       | Sonnet | read/write | Unit and integration tests                                  |
-| `e2e-tester`        | Sonnet | read/write | Playwright flows, axe checks                                |
-| `code-reviewer`     | Sonnet | read-only  | Diff review before every PR                                 |
-| `security-auditor`  | Sonnet | read-only  | OWASP review; mandatory when auth, RLS, secrets or public endpoints change |
+| `frontend-engineer` | Sonnet | read/write | Pages, components, accessibility, i18n UI, performance                        |
+| `qa-engineer`       | Sonnet | read/write | Unit and integration tests                                                    |
+| `e2e-tester`        | Sonnet | read/write | Playwright flows, axe checks                                                  |
+| `code-reviewer`     | Sonnet | read-only  | Diff review before every PR                                                   |
+| `security-auditor`  | Sonnet | read-only  | OWASP review; mandatory when auth, RLS, secrets or public endpoints change    |
 
 ### Delegation protocol
 
@@ -176,25 +176,25 @@ Small tasks it does itself; it delegates only when specialisation pays for the c
 
 ### Drift canaries
 
-| Canary        | Rule                                                                    | If missing                         |
-| ------------- | ----------------------------------------------------------------------- | ---------------------------------- |
-| Greeting      | Every director reply starts with "Chef"                                  | Close handoff, start a new session |
-| Agent token   | Every agent report ends with `[<ROLE>-ACK]`, e.g. `[DB-ACK]`             | Reject the report and re-brief     |
-| Handoff seal  | Every handoff ends with `— end of handoff NNNN —`                       | The handoff is incomplete          |
+| Canary       | Rule                                                         | If missing                         |
+| ------------ | ------------------------------------------------------------ | ---------------------------------- |
+| Greeting     | Every director reply starts with "Chef"                      | Close handoff, start a new session |
+| Agent token  | Every agent report ends with `[<ROLE>-ACK]`, e.g. `[DB-ACK]` | Reject the report and re-brief     |
+| Handoff seal | Every handoff ends with `— end of handoff NNNN —`            | The handoff is incomplete          |
 
 Canaries detect forgotten instructions; tests and CI are what prove the code is correct.
 
 ## 10. Roadmap
 
-| Version  | Content                                                                                   |
-| -------- | ----------------------------------------------------------------------------------------- |
-| **v0.0** | Foundations: repo, tooling, agents, hooks, CI, security scanning, first ADRs, empty deploy |
+| Version  | Content                                                                                                                |
+| -------- | ---------------------------------------------------------------------------------------------------------------------- |
+| **v0.0** | Foundations: repo, tooling, agents, hooks, CI, security scanning, first ADRs, empty deploy                             |
 | **v0.1** | Multi-tenant auth, operator console CRUD (galleries, artists, artworks, images), public artwork page, tag resolver, QR |
-| **v0.2** | CSV import, 4 languages, AI translation with review, accessibility (WCAG 2.2 AA)          |
-| **v0.3** | Encoding station (Web NFC), printable labels, demo gallery with public-domain works       |
-| **v0.4** | Visitor: save, share (OG images), leads; gallery portal: leads and availability           |
-| **v0.5** | Analytics for galleries                                                                    |
-| **v0.6** | NTAG 424 DNA signed URLs (SUN), offline PWA, exhibitions                                  |
+| **v0.2** | CSV import, 4 languages, AI translation with review, accessibility (WCAG 2.2 AA)                                       |
+| **v0.3** | Encoding station (Web NFC), printable labels, demo gallery with public-domain works                                    |
+| **v0.4** | Visitor: save, share (OG images), leads; gallery portal: leads and availability                                        |
+| **v0.5** | Analytics for galleries                                                                                                |
+| **v0.6** | NTAG 424 DNA signed URLs (SUN), offline PWA, exhibitions                                                               |
 
 ## 11. ADR backlog
 
