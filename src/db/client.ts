@@ -7,7 +7,7 @@ import { getServerEnv } from "@/lib/server-env";
 
 import * as schema from "./schema";
 
-export type Database = NodePgDatabase<typeof schema>;
+export type Database = NodePgDatabase<typeof schema> & { $client: Pool };
 
 // Small on purpose: every serverless instance keeps its own pool, and Neon's pooler multiplexes.
 const POOL_MAX = 5;

@@ -4,6 +4,7 @@ import { sql } from "drizzle-orm";
 import { z } from "zod";
 
 import { getDb, type Database } from "./client";
+import { assertAppRole } from "./role-guard";
 
 const tenantContextSchema = z.object({
   userId: z.string().min(1),
@@ -25,6 +26,7 @@ export async function withTenant<T>(
   db: Database = getDb(),
 ): Promise<T> {
   const { userId, organizationId } = tenantContextSchema.parse(context);
+  await assertAppRole(db.$client);
   return db.transaction(async (tx) => {
     await tx.execute(
       sql`select set_config('app.user_id', ${userId}, true), set_config('app.organization_id', ${organizationId}, true)`,
