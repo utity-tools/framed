@@ -15,3 +15,7 @@ minimumReleaseAgeExclude:
   - "@next/swc-win32-x64-msvc@16.3.7"
   - eslint-config-next@16.3.7
   - next@16.3.7
+overrides:
+  # drizzle-kit pulls esbuild 0.18 through the deprecated @esbuild-kit loader (GHSA-67mh-4wv8-2f99).
+  # Pin that path to the esbuild drizzle-kit already uses directly; drop when drizzle-kit does.
+  "@esbuild-kit/core-utils>esbuild": 0.25.12
