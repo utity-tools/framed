@@ -200,16 +200,16 @@ Canaries detect forgotten instructions; tests and CI are what prove the code is 
 
 1. Stack, environments and workflow (incl. rebase merge)
 2. Neon + Drizzle instead of Supabase
-3. Better Auth with organizations for multi-tenancy
-4. Tenant isolation with Postgres RLS
-5. Tag IDs: permanent random IDs, mapping in the database
-6. Public URLs and locale resolution
-7. AI translations as reviewed proposals
-8. Visitor identity: anonymous first, optional account
-9. Scan analytics without personal data
-10. Rate limiting public endpoints
-11. Security headers and CSP
-12. Production deploy after migrations
+3. Better Auth with organizations and tenant isolation with Postgres RLS
+   ([ADR 0004](adr/0004-better-auth-and-tenant-context.md))
+4. Tag IDs: permanent random IDs, mapping in the database
+5. Public URLs and locale resolution
+6. AI translations as reviewed proposals
+7. Visitor identity: anonymous first, optional account
+8. Scan analytics without personal data
+9. Rate limiting public endpoints
+10. Security headers and CSP
+11. Production deploy after migrations
 
 ## 12. Open questions
 
