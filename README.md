@@ -53,7 +53,7 @@ the content, encodes the cards and hands them over ready to hang.
 
 ## Getting started
 
-Requirements: Node 24 and pnpm.
+Requirements: Node 24, pnpm and `jq` (used by the Claude Code hooks).
 
 ```bash
 pnpm install              # also installs the git hooks

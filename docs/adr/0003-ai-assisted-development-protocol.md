@@ -39,5 +39,9 @@ never pushed or opened as a pull request.
 
 - Canaries detect forgotten instructions; they do not prove the code is right. Tests, CI and
   human review still do that.
-- Hooks can block legitimate commands (for example, a command that merely mentions a blocked
-  flag). When that happens the agent explains the block instead of working around it.
+- The Claude Code guard parses each command (it ignores quoted text and heredoc bodies, and
+  understands `git -C`, combined short flags and refspecs), but a shell always has another
+  spelling. It is a guard rail for honest mistakes, not a security boundary: the boundary is
+  the branch rules on GitHub, backed by the git hooks.
+- When a hook blocks a legitimate command, the agent explains the block instead of working
+  around it.
