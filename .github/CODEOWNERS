@@ -1,0 +1,6 @@
+# Every change is reviewed by the maintainer. Rules that guard the workflow are listed
+# explicitly so a future change to the default owner cannot leave them unowned.
+*                 @utity-tools
+/.github/         @utity-tools
+/.claude/         @utity-tools
+/.husky/          @utity-tools

@@ -1,0 +1,28 @@
+name: Bug report
+description: Something does not work as expected.
+labels: [bug]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened
+      description: What you did, what you expected and what happened instead.
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Tap the card on …
+        2. …
+    validations:
+      required: true
+  - type: input
+    id: device
+    attributes:
+      label: Device and browser
+      placeholder: iPhone 15, Safari 26
+  - type: markdown
+    attributes:
+      value: "Security issues: do not open an issue, follow [SECURITY.md](https://github.com/utity-tools/framed/blob/main/SECURITY.md)."
