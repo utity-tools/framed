@@ -7,3 +7,6 @@ export const OWNER_URL =
   "postgres://framed_owner:framed_owner@localhost:5433/framed";
 export const APP_URL =
   process.env.DATABASE_URL || "postgres://framed_app_login:framed_app_login@localhost:5433/framed";
+export const AUTH_URL =
+  process.env.AUTH_DATABASE_URL ||
+  "postgres://framed_auth_login:framed_auth_login@localhost:5433/framed";
