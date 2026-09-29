@@ -40,7 +40,8 @@ a clean history matter as much as features. The plan is in [`docs/plan.md`](docs
 2. **Atomic Conventional Commits.** PRs are **rebase-merged**, so every commit lands on `main`:
    each one does one thing, has a clear message and leaves lint, types and tests green.
 3. **Tests first.** New behaviour starts with a failing test.
-4. **Green before commit:** git hooks run lint, format and related tests. Never skip them.
+4. **Green before commit:** pre-commit runs lint, format and related tests; pre-push runs
+   typecheck and unit tests. Never skip them.
 5. **Everything reaches `main` through a PR** with CI green. Humans merge.
 6. Significant decisions get an ADR in `docs/adr/` (copy `0000-template.md`).
 

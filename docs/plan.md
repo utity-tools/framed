@@ -63,19 +63,19 @@ One-off **setup fee per artwork** (card, translation, label) plus a **monthly fe
 
 ## 4. Stack
 
-| Area          | Choice                                                                                   | Why                                                                      |
-| ------------- | ---------------------------------------------------------------------------------------- | ------------------------------------------------------------------------ |
-| App           | Next.js 16 (App Router, Server Actions, Cache Components) · React 19 · TypeScript strict | One app, end-to-end types                                                |
-| UI            | Tailwind CSS v4 · shadcn/ui                                                              | Accessible primitives, fast iteration                                    |
-| Database      | **Neon Postgres**                                                                        | A database branch per PR: every preview gets isolated data               |
-| Schema/ORM    | **Drizzle**                                                                              | Schema in TypeScript, versioned migrations, RLS declared with `pgPolicy` |
-| Auth          | **Better Auth**                                                                          | Organizations plugin (multi-tenant + roles), passkeys, magic links       |
-| Images        | **Vercel Blob** + `next/image`                                                           | Optimised artwork photos                                                 |
-| i18n          | **next-intl**                                                                            | UI strings; translated content lives in the database                     |
-| AI            | AI SDK v6 via AI Gateway · Zod-validated output                                          | Translation proposals reviewed by a human                                |
-| Rate limiting | **Upstash Redis**                                                                        | Protects public endpoints (scans, leads)                                 |
-| Quality       | Vitest · Playwright · axe · Lighthouse CI                                                | Unit, E2E, accessibility and performance gates                           |
-| Observability | Sentry · Vercel Speed Insights                                                           | Errors and real-user performance                                         |
+| Area          | Choice                                                                                 | Why                                                                      |
+| ------------- | -------------------------------------------------------------------------------------- | ------------------------------------------------------------------------ |
+| App           | Next.js 16 (App Router, Server Actions, React Compiler) · React 19 · TypeScript strict | One app, end-to-end types                                                |
+| UI            | Tailwind CSS v4 · shadcn/ui                                                            | Accessible primitives, fast iteration                                    |
+| Database      | **Neon Postgres**                                                                      | A database branch per PR: every preview gets isolated data               |
+| Schema/ORM    | **Drizzle**                                                                            | Schema in TypeScript, versioned migrations, RLS declared with `pgPolicy` |
+| Auth          | **Better Auth**                                                                        | Organizations plugin (multi-tenant + roles), passkeys, magic links       |
+| Images        | **Vercel Blob** + `next/image`                                                         | Optimised artwork photos                                                 |
+| i18n          | **next-intl**                                                                          | UI strings; translated content lives in the database                     |
+| AI            | AI SDK v6 via AI Gateway · Zod-validated output                                        | Translation proposals reviewed by a human                                |
+| Rate limiting | **Upstash Redis**                                                                      | Protects public endpoints (scans, leads)                                 |
+| Quality       | Vitest · Playwright · axe · Lighthouse CI                                              | Unit, E2E, accessibility and performance gates                           |
+| Observability | Sentry · Vercel Speed Insights                                                         | Errors and real-user performance                                         |
 
 Each choice gets an ADR. Differences from the previous project (Supabase) are deliberate.
 
